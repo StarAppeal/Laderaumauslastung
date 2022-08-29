@@ -141,4 +141,17 @@ public class Vehicle implements Serializable {
         result = 31 * result + (blocked ? 1 : 0);
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Vehicle{" +
+                "id=" + id +
+                ", vehicleId='" + vehicleId + '\'' +
+                ", loadingTime=" + loadingTime +
+                ", dischargeTime=" + dischargeTime +
+                ", storage=" + storage +
+                ", loadFactor=" + loadFactor +
+                ", blocked=" + blocked +
+                '}';
+    }
 }

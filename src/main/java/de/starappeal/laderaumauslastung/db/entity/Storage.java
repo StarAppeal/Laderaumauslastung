@@ -92,4 +92,14 @@ public class Storage implements Serializable {
         result = 31 * result + depth.hashCode();
         return result;
     }
+
+    @Override
+    public String toString() {
+        return "Storage{" +
+                "id=" + id +
+                ", height=" + height +
+                ", width=" + width +
+                ", depth=" + depth +
+                '}';
+    }
 }
