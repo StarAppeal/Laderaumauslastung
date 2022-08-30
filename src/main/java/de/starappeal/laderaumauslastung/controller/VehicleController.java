@@ -6,64 +6,83 @@ import de.starappeal.laderaumauslastung.response.VehicleResponse;
 import de.starappeal.laderaumauslastung.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.web.PagedResourcesAssembler;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.PagedModel;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/vehicles")
 public class VehicleController {
 
-    private VehicleService service;
+    private final VehicleService service;
+    private final VehicleModelAssembler assembler;
 
     @Autowired
-    public VehicleController(VehicleService service) {
+    public VehicleController(VehicleService service, VehicleModelAssembler assembler) {
         this.service = service;
+        this.assembler = assembler;
     }
 
     @GetMapping("/")
-    public List<VehicleResponse> findAll() {
-        return service
-                .findAll()
-                .stream()
-                .map(VehicleResponse::new)
-                .collect(Collectors.toList());
+    public CollectionModel<EntityModel<VehicleResponse>> findAll() {
+        List<Vehicle> vehicles = service.findAll();
+
+        return assembler.toCollectionModel(vehicles);
     }
 
     @GetMapping("/{id}")
-    public VehicleResponse findById(@PathVariable Long id) {
-        return new VehicleResponse(service.findById(id));
+    public EntityModel<VehicleResponse> findById(@PathVariable Long id) {
+
+        Vehicle vehicle = service.findById(id);
+
+        return assembler.toModel(vehicle);
     }
 
     @PostMapping("/")
-    public VehicleResponse create(@RequestBody Vehicle vehicle) {
-        return new VehicleResponse(service.create(vehicle));
+    public EntityModel<VehicleResponse> create(@RequestBody Vehicle vehicle) {
+        return assembler.toModel(service.create(vehicle));
     }
 
     @PostMapping("/bulkCreate")
-    public List<VehicleResponse> bulkCreate(@RequestBody List<Vehicle> vehicles) {
-        return service
-                .bulkCreate(vehicles)
-                .stream()
-                .map(VehicleResponse::new)
-                .collect(Collectors.toList());
+    public CollectionModel<EntityModel<VehicleResponse>> bulkCreate(@RequestBody List<Vehicle> vehicles) {
+        return assembler.toCollectionModel(
+                service.bulkCreate(vehicles)
+        );
     }
 
     @PutMapping("/")
-    public VehicleResponse update(@RequestBody Vehicle vehicle) {
-        return new VehicleResponse(service.update(vehicle));
+    public EntityModel<VehicleResponse> update(@RequestBody Vehicle vehicle) {
+        return assembler.toModel(service.update(vehicle));
     }
 
     @DeleteMapping("/{id}")
-    public @ResponseBody String deleteById(@PathVariable Long id) {
+    public ResponseEntity<?> deleteById(@PathVariable Long id) {
         service.delete(id);
-        return "OK"; //TODO: change this return type
+        return ResponseEntity.noContent().build();
     }
 
 
     @PostMapping("/filter")
-    public Page<VehicleResponse> findByFilter(@RequestBody SearchRequest request) {
-        return service.findByFilter(request).map(VehicleResponse::new);
+    public ResponseEntity<PagedModel<EntityModel<VehicleResponse>>> findByFilter(
+            PagedResourcesAssembler<Vehicle> pagedResourcesAssembler,
+            @RequestBody SearchRequest request) {
+
+        Page<Vehicle> vehicles = service.findByFilter(request);
+
+        PagedModel<EntityModel<VehicleResponse>> response = pagedResourcesAssembler.toModel(
+                vehicles,
+                assembler
+        );
+
+        return ResponseEntity
+                .ok()
+                .contentType(MediaTypes.HAL_FORMS_JSON)
+                .body(response);
     }
 }
