@@ -1,9 +1,9 @@
-package de.starappeal.laderaumauslastung.model;
+package de.starappeal.laderaumauslastung.response;
 
 import de.starappeal.laderaumauslastung.db.entity.Vehicle;
 import de.starappeal.laderaumauslastung.db.entity.Storage;
 
-public class VehicleModel {
+public class VehicleResponse {
 
     private String vehicleId;
 
@@ -17,7 +17,7 @@ public class VehicleModel {
 
     private boolean blocked;
 
-    public VehicleModel(Vehicle vehicle) {
+    public VehicleResponse(Vehicle vehicle) {
         Storage storage = vehicle.getStorage();
         this.vehicleId = vehicle.getVehicleId();
         this.loadingTime = vehicle.getLoadingTime();

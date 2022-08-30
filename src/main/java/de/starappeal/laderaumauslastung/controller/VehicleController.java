@@ -2,7 +2,7 @@ package de.starappeal.laderaumauslastung.controller;
 
 import de.starappeal.laderaumauslastung.api.SearchRequest;
 import de.starappeal.laderaumauslastung.db.entity.Vehicle;
-import de.starappeal.laderaumauslastung.model.VehicleModel;
+import de.starappeal.laderaumauslastung.response.VehicleResponse;
 import de.starappeal.laderaumauslastung.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,36 +23,36 @@ public class VehicleController {
     }
 
     @GetMapping("/")
-    public List<VehicleModel> findAll() {
+    public List<VehicleResponse> findAll() {
         return service
                 .findAll()
                 .stream()
-                .map(VehicleModel::new)
+                .map(VehicleResponse::new)
                 .collect(Collectors.toList());
     }
 
     @GetMapping("/{id}")
-    public VehicleModel findById(@PathVariable Long id) {
-        return new VehicleModel(service.findById(id));
+    public VehicleResponse findById(@PathVariable Long id) {
+        return new VehicleResponse(service.findById(id));
     }
 
     @PostMapping("/")
-    public VehicleModel create(@RequestBody Vehicle vehicle) {
-        return new VehicleModel(service.create(vehicle));
+    public VehicleResponse create(@RequestBody Vehicle vehicle) {
+        return new VehicleResponse(service.create(vehicle));
     }
 
     @PostMapping("/bulkCreate")
-    public List<VehicleModel> bulkCreate(@RequestBody List<Vehicle> vehicles) {
+    public List<VehicleResponse> bulkCreate(@RequestBody List<Vehicle> vehicles) {
         return service
                 .bulkCreate(vehicles)
                 .stream()
-                .map(VehicleModel::new)
+                .map(VehicleResponse::new)
                 .collect(Collectors.toList());
     }
 
     @PutMapping("/")
-    public VehicleModel update(@RequestBody Vehicle vehicle) {
-        return new VehicleModel(service.update(vehicle));
+    public VehicleResponse update(@RequestBody Vehicle vehicle) {
+        return new VehicleResponse(service.update(vehicle));
     }
 
     @DeleteMapping("/{id}")
@@ -63,7 +63,7 @@ public class VehicleController {
 
 
     @PostMapping("/filter")
-    public Page<VehicleModel> findByFilter(@RequestBody SearchRequest request) {
-        return service.findByFilter(request).map(VehicleModel::new);
+    public Page<VehicleResponse> findByFilter(@RequestBody SearchRequest request) {
+        return service.findByFilter(request).map(VehicleResponse::new);
     }
 }
