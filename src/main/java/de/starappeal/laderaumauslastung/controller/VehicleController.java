@@ -36,7 +36,7 @@ public class VehicleController {
         return new VehicleModel(service.findById(id));
     }
 
-    @PostMapping("/vehicles")
+    @PostMapping("/")
     public VehicleModel create(@RequestBody Vehicle vehicle) {
         return new VehicleModel(service.create(vehicle));
     }
