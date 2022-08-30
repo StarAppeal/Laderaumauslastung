@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
+@RequestMapping("/vehicles")
 public class VehicleController {
 
     private VehicleService service;
@@ -19,7 +20,7 @@ public class VehicleController {
         this.service = service;
     }
 
-    @GetMapping("/vehicles")
+    @GetMapping("/")
     public List<VehicleModel> findAll() {
         return service
                 .findAll()
@@ -28,7 +29,7 @@ public class VehicleController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/vehicles/{id}")
+    @GetMapping("/{id}")
     public VehicleModel findById(@PathVariable Long id) {
         return new VehicleModel(service.findById(id));
     }
@@ -38,7 +39,7 @@ public class VehicleController {
         return new VehicleModel(service.create(vehicle));
     }
 
-    @PostMapping("/vehicles/bulkCreate")
+    @PostMapping("/bulkCreate")
     public List<VehicleModel> bulkCreate(@RequestBody List<Vehicle> vehicles) {
         return service
                 .bulkCreate(vehicles)
@@ -47,13 +48,13 @@ public class VehicleController {
                 .collect(Collectors.toList());
     }
 
-    @PutMapping("/vehicles")
+    @PutMapping("/")
     public VehicleModel update(@RequestBody Vehicle vehicle) {
         return new VehicleModel(service.update(vehicle));
     }
 
-    @DeleteMapping("/vehicles/{id}")
-    public String deleteById(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public @ResponseBody String deleteById(@PathVariable Long id) {
         service.delete(id);
         return "OK"; //TODO: change this return type
     }
