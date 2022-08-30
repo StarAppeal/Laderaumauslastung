@@ -1,6 +1,7 @@
 package de.starappeal.laderaumauslastung.api;
 
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,14 +17,14 @@ public record SearchSpecification<T>(SearchRequest searchRequest) implements Spe
     @Serial
     private static final long serialVersionUID = -5739252582115415172L;
 
-    private static final Logger logger = Logger.getLogger(SearchSpecification.class);
+    private static final Logger logger = LogManager.getLogger(SearchSpecification.class);
 
     @Override
     public Predicate toPredicate(Root<T> root, CriteriaQuery<?> query, CriteriaBuilder cb) {
         Predicate predicate = cb.conjunction();
 
         for (FilterRequest filter : this.searchRequest.filters()) {
-            logger.info("Filter: %s %s %s".formatted(filter.getKey(), filter.getOperator().toString(), filter.getValue()));
+            logger.info("Filter: {} {} {}", filter.getKey(), filter.getOperator(), filter.getValue());
             predicate = filter.getOperator().build(root, cb, filter, predicate);
         }
 
