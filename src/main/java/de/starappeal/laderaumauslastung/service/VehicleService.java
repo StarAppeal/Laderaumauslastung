@@ -1,11 +1,15 @@
 package de.starappeal.laderaumauslastung.service;
 
+import de.starappeal.laderaumauslastung.api.SearchRequest;
+import de.starappeal.laderaumauslastung.api.SearchSpecification;
 import de.starappeal.laderaumauslastung.db.entity.Vehicle;
 import de.starappeal.laderaumauslastung.db.repository.VehicleRepository;
 import de.starappeal.laderaumauslastung.exception.VehicleAlreadyExistsException;
 import de.starappeal.laderaumauslastung.exception.VehicleNotFoundException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -69,6 +73,12 @@ public class VehicleService {
     public void delete(Long id) {
         logger.info("VehicleService.delete with parameters (%d) has been called".formatted(id));
         repository.deleteById(id);
+    }
+
+    public Page<Vehicle> findByFilter(SearchRequest request) {
+        SearchSpecification<Vehicle> specification = new SearchSpecification<>(request);
+        Pageable pageable = SearchSpecification.getPageable(request.page(), request.size());
+        return repository.findAll(specification, pageable);
     }
 
 }

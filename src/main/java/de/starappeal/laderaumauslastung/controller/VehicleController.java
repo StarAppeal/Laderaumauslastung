@@ -1,9 +1,11 @@
 package de.starappeal.laderaumauslastung.controller;
 
+import de.starappeal.laderaumauslastung.api.SearchRequest;
 import de.starappeal.laderaumauslastung.db.entity.Vehicle;
 import de.starappeal.laderaumauslastung.model.VehicleModel;
 import de.starappeal.laderaumauslastung.service.VehicleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -59,4 +61,9 @@ public class VehicleController {
         return "OK"; //TODO: change this return type
     }
 
+
+    @PostMapping("/filter")
+    public Page<VehicleModel> findByFilter(@RequestBody SearchRequest request) {
+        return service.findByFilter(request).map(VehicleModel::new);
+    }
 }
