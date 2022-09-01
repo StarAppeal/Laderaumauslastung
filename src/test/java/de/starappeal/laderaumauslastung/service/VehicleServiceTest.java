@@ -3,7 +3,7 @@ package de.starappeal.laderaumauslastung.service;
 import de.starappeal.laderaumauslastung.db.entity.Vehicle;
 import de.starappeal.laderaumauslastung.db.entity.Storage;
 import de.starappeal.laderaumauslastung.db.repository.VehicleRepository;
-import de.starappeal.laderaumauslastung.exception.VehicleAlreadyExistsException;
+import de.starappeal.laderaumauslastung.exception.VehicleCreateException;
 import de.starappeal.laderaumauslastung.exception.VehicleNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,18 +25,19 @@ class VehicleServiceTest {
 
     private final Storage storage = new Storage(1L, 1d, 2d, 3d);
 
-    private final Vehicle vehicle = new Vehicle(1L, "vehicleID", 2, 5, storage, 5.5, false);
-
+    private Vehicle vehicle;
 
     @BeforeEach
     void setUp() {
         this.repository = mock(VehicleRepository.class);
         this.service = new VehicleService(repository);
+        this.vehicle = new Vehicle(1L, "vehicleID", 2, 5, storage, 5.5, false);
+
     }
 
     @Test
     void create() {
-        when(repository.existsById(eq(vehicle.getId()))).thenReturn(false);
+        vehicle.setId(null);
         when(repository.save(eq(vehicle))).thenReturn(vehicle);
 
         Vehicle created = service.create(vehicle);
@@ -45,10 +46,8 @@ class VehicleServiceTest {
     }
 
     @Test
-    void create_VehicleAlreadyExistsException() {
-        when(repository.existsById(eq(vehicle.getId()))).thenReturn(true);
-
-        assertThrows(VehicleAlreadyExistsException.class, () -> service.create(vehicle));
+    void create_VehicleCreateException() {
+        assertThrows(VehicleCreateException.class, () -> service.create(vehicle));
     }
 
     @Test
@@ -74,7 +73,7 @@ class VehicleServiceTest {
     void bulkCreate_VehicleAlreadyExistsException() {
         when(repository.existsById(any())).thenReturn(true);
 
-        assertThrows(VehicleAlreadyExistsException.class, () -> service.bulkCreate(Collections.singletonList(vehicle)));
+        assertThrows(VehicleCreateException.class, () -> service.bulkCreate(Collections.singletonList(vehicle)));
     }
 
     @Test
@@ -114,7 +113,7 @@ class VehicleServiceTest {
         when(repository.existsById(eq(vehicle.getId()))).thenReturn(true);
         when(repository.save(eq(vehicle))).thenReturn(vehicle);
 
-        Vehicle created = service.update(vehicle);
+        Vehicle created = service.update(vehicle, vehicle.getId());
 
         assertEquals(vehicle, created);
     }
@@ -123,7 +122,7 @@ class VehicleServiceTest {
     void update_VehicleNotFoundException() {
         when(repository.existsById(any())).thenReturn(false);
 
-        assertThrows(VehicleNotFoundException.class, () -> service.update(vehicle));
+        assertThrows(VehicleNotFoundException.class, () -> service.update(vehicle, 213L));
     }
 
     //testing delete with mocked data wouldn't make any sense.

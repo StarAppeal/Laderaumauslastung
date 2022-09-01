@@ -4,7 +4,7 @@ import de.starappeal.laderaumauslastung.api.SearchRequest;
 import de.starappeal.laderaumauslastung.api.SearchSpecification;
 import de.starappeal.laderaumauslastung.db.entity.Vehicle;
 import de.starappeal.laderaumauslastung.db.repository.VehicleRepository;
-import de.starappeal.laderaumauslastung.exception.VehicleAlreadyExistsException;
+import de.starappeal.laderaumauslastung.exception.VehicleCreateException;
 import de.starappeal.laderaumauslastung.exception.VehicleNotFoundException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -29,11 +29,8 @@ public class VehicleService {
 
     public Vehicle create(Vehicle vehicle) {
         logger.info("VehicleService.create has been called with parameters ({})", vehicle);
-        if (repository.existsById(vehicle.getId())) {
-            throw new VehicleAlreadyExistsException(
-                    "Vehicle with ID %d already exists, a current existing vehicle would be updated!"
-                            .formatted(vehicle.getId())
-            );
+        if (vehicle.getId() != null) {
+            throw new VehicleCreateException("Vehicle should not have an id to create it");
         }
         Vehicle vehicleCreated = repository.save(vehicle);
         logger.info("Vehicle with id {} has been created", vehicleCreated.getId());
@@ -43,7 +40,7 @@ public class VehicleService {
     public List<Vehicle> bulkCreate(List<Vehicle> vehicles) {
         logger.info("VehicleService.bulkCreate has been called with parameters ({})", vehicles);
         if (vehicles.stream().anyMatch(d -> repository.existsById(d.getId()))) {
-            throw new VehicleAlreadyExistsException("List contains a vehicle with an id which is already present, it would update the existing one!");
+            throw new VehicleCreateException("List contains a Vehicle which should not have an id!");
         }
         List<Vehicle> vehiclesCreated = repository.saveAll(vehicles);
         vehiclesCreated.forEach(v -> logger.info("Vehicle with id {} has been created", v.getId()));
@@ -63,11 +60,12 @@ public class VehicleService {
                 );
     }
 
-    public Vehicle update(Vehicle vehicle) {
-        logger.info("VehicleService.update with parameters ({}) has been called", vehicle);
-        if (!repository.existsById(vehicle.getId())) {
+    public Vehicle update(Vehicle vehicle, Long id) {
+        logger.info("VehicleService.update with parameters ({}, {}) has been called", vehicle, id);
+        if (!repository.existsById(id)) {
             throw new VehicleNotFoundException("Vehicle with ID %d not found, a new vehicle would be created!!".formatted(vehicle.getId()));
         }
+        vehicle.setId(id);
         return repository.save(vehicle);
     }
 

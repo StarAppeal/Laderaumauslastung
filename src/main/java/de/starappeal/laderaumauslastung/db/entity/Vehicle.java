@@ -7,6 +7,7 @@ import javax.persistence.*;
 import java.io.Serial;
 import java.io.Serializable;
 
+import static javax.persistence.GenerationType.IDENTITY;
 import static org.springframework.data.annotation.AccessType.Type.*;
 
 @Entity
@@ -18,7 +19,7 @@ public class Vehicle implements Serializable {
     private static final long serialVersionUID = -51676233172L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "ID")
     private Long id;
 

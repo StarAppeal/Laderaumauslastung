@@ -1,6 +1,6 @@
 package de.starappeal.laderaumauslastung.controller;
 
-import de.starappeal.laderaumauslastung.exception.VehicleAlreadyExistsException;
+import de.starappeal.laderaumauslastung.exception.VehicleCreateException;
 import de.starappeal.laderaumauslastung.exception.VehicleNotFoundException;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.mediatype.problem.Problem;
@@ -26,8 +26,8 @@ public class VehicleControllerAdvice {
     }
 
     @ResponseBody
-    @ExceptionHandler(VehicleAlreadyExistsException.class)
-    public ResponseEntity<?> vehicleAlreadyExistsHandler(VehicleAlreadyExistsException exception) {
+    @ExceptionHandler(VehicleCreateException.class)
+    public ResponseEntity<?> vehicleCreateException(VehicleCreateException exception) {
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
                 .header(HttpHeaders.CONTENT_TYPE, MediaTypes.HTTP_PROBLEM_DETAILS_JSON_VALUE)

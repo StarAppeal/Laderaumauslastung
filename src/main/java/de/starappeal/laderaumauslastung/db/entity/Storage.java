@@ -5,6 +5,7 @@ import java.io.Serial;
 import java.io.Serializable;
 
 import static javax.persistence.AccessType.FIELD;
+import static javax.persistence.GenerationType.IDENTITY;
 
 @Entity
 @Table(name = "STORAGE")
@@ -15,7 +16,7 @@ public class Storage implements Serializable {
     private static final long serialVersionUID = 945109214217L;
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = IDENTITY)
     @Column(name = "ID")
     private Long id;
 

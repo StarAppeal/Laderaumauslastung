@@ -11,6 +11,7 @@ import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,20 +46,25 @@ public class VehicleController {
     }
 
     @PostMapping("/")
+    @ResponseStatus(HttpStatus.CREATED)
     public EntityModel<VehicleResponse> create(@RequestBody Vehicle vehicle) {
         return assembler.toModel(service.create(vehicle));
     }
 
     @PostMapping("/bulkCreate")
+    @ResponseStatus(HttpStatus.CREATED)
     public CollectionModel<EntityModel<VehicleResponse>> bulkCreate(@RequestBody List<Vehicle> vehicles) {
         return assembler.toCollectionModel(
                 service.bulkCreate(vehicles)
         );
     }
 
-    @PutMapping("/")
-    public EntityModel<VehicleResponse> update(@RequestBody Vehicle vehicle) {
-        return assembler.toModel(service.update(vehicle));
+    @PutMapping("/{id}")
+    public EntityModel<VehicleResponse> update(
+            @RequestBody Vehicle vehicle,
+            @PathVariable Long id
+    ) {
+        return assembler.toModel(service.update(vehicle, id));
     }
 
     @DeleteMapping("/{id}")
