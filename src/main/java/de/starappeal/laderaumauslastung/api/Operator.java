@@ -39,6 +39,14 @@ public enum Operator {
         }
     },
 
+    GREATER_THAN_EQUALS {
+        public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
+            Expression<String> key = root.get(request.getKey());
+
+            return cb.and(cb.greaterThanOrEqualTo(key, request.getValue().toString()), predicate);
+        }
+    },
+
     IN {
         public <T> Predicate build(Root<T> root, CriteriaBuilder cb, FilterRequest request, Predicate predicate) {
             List<Object> values = request.getValues();
