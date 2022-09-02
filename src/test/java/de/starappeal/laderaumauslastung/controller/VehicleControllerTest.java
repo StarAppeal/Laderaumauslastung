@@ -13,6 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -25,12 +26,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+//@Sql(scripts = {"" },executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 public class VehicleControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
 
     @Test
+    //TODO: database is not reset after every test
     void shouldReturnAllVehicles() throws Exception {
         mockMvc.perform(
                         get("/vehicles/")
