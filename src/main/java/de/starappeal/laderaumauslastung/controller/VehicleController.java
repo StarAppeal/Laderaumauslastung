@@ -9,7 +9,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.MediaTypes;
 import org.springframework.hateoas.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,12 +36,18 @@ public class VehicleController {
         return assembler.toCollectionModel(vehicles);
     }
 
+
     @GetMapping("/{id}")
     public EntityModel<VehicleResponse> findById(@PathVariable Long id) {
 
         Vehicle vehicle = service.findById(id);
 
         return assembler.toModel(vehicle);
+    }
+
+    @GetMapping("/raw/{id}")
+    public Vehicle findByIdRaw(@PathVariable Long id) {
+        return service.findById(id);
     }
 
     @PostMapping("/")
@@ -86,9 +91,6 @@ public class VehicleController {
                 assembler
         );
 
-        return ResponseEntity
-                .ok()
-                .contentType(MediaTypes.HAL_FORMS_JSON)
-                .body(response);
+        return ResponseEntity.ok(response);
     }
 }

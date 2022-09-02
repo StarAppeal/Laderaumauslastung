@@ -16,6 +16,7 @@ public class VehicleModelAssembler implements RepresentationModelAssembler<Vehic
     public EntityModel<VehicleResponse> toModel(Vehicle entity) {
         return EntityModel.of(new VehicleResponse(entity),
                 linkTo(methodOn(VehicleController.class).findById(entity.getId())).withSelfRel(),
+                linkTo(methodOn(VehicleController.class).findByIdRaw(entity.getId())).withRel("raw"),
                 linkTo(methodOn(VehicleController.class).findAll()).withRel("vehicles")
         );
     }
